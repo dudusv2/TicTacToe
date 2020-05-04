@@ -14,7 +14,7 @@ import android.view.WindowManager
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class NewActivity : AppCompatActivity() {
 
-    private var buttons = arrayOfNulls<Button>(25)
+    private var buttons = arrayOfNulls<Button>(100)
     private var turn = true
     private var roundCount = 0
     private var p1Score = 0
@@ -37,24 +37,22 @@ class NewActivity : AppCompatActivity() {
         }
 
         turn = savedInstanceState?.getBoolean("turn") ?: true
-        for (x in 0..24) {
+        for (x in 0..99) {
             val btn = "button_$x"
             val resID = resources.getIdentifier(btn, "id", packageName)
             buttons[x] = findViewById(resID)
             buttons[x]!!.setOnClickListener {
                 if ((buttons[x] as Button).text.toString() != "") return@setOnClickListener
                 if (turn) buttons[x]!!.text = "X" else buttons[x]!!.text = "O"
-
                 roundCount++
 
                 if (checkForWin()) {
-
                     if (turn) {
                         player1Wins()
                     } else {
                         player2Wins()
                     }
-                } else if (roundCount == 25) {
+                } else if (roundCount == 99) {
                     draw()
                 } else {
                     turn = !turn
@@ -70,34 +68,97 @@ class NewActivity : AppCompatActivity() {
 
 
     private fun checkForWin(): Boolean {
-
-        val field = arrayOfNulls<String>(25)
-
-        for (i in 0..24) field[i] = buttons[i]!!.text.toString()
-
-        for (i in 0..4) {
-            if (
-                    (field[i] == field[i + 5] && field[i] == field[i + 10] && field[i] == field[i + 15] && field[i] != "") ||
-                    (field[i + 5] == field[i + 10] && field[i + 5] == field[i + 15] && field[i + 5] == field[i + 20] && field[i + 5] != "")
-            ) return true
-        }
-        for (i in 0..24 step 5) {
-            if ((field[i] == field[i + 1] && field[i] == field[i + 2] && field[i] == field[i + 3] && field[i] != "") ||
-                    (field[i + 1] == field[i + 2] && field[i + 1] == field[i + 3] && field[i + 1] == field[i + 4] && field[i + 1] != "")
-            ) return true
-        }
-        if (
-                (field[0] == field[6] && field[0] == field[12] && field[0] == field[18] && field[0] != "") ||
-                (field[5] == field[11] && field[5] == field[17] && field[5] == field[23] && field[5] != "") ||
-                (field[1] == field[7] && field[1] == field[13] && field[1] == field[19] && field[1] != "") ||
-                (field[6] == field[12] && field[6] == field[18] && field[6] == field[24] && field[6] != "")
-        ) return true
-
-        return ((field[4] == field[8] && field[4] == field[12] && field[4] == field[16] && field[4] != "") ||
-                (field[8] == field[12] && field[8] == field[16] && field[8] == field[20] && field[8] != "") ||
-                (field[3] == field[7] && field[3] == field[11] && field[3] == field[15] && field[3] != "") ||
-                (field[9] == field[13] && field[9] == field[17] && field[9] == field[21] && field[9] != ""))
+        return(chceckHorizontal() || chceckVertical())
     }
+
+    private fun chceckHorizontal(): Boolean {
+        for (x in 4..94 step 10) {
+            // Czy dwa środkowe mają takie same niepuste znaki
+            if (buttons[x]!!.text.toString() != "" && buttons[x + 1]!!.text.toString() != "" && buttons[x]!!.text.toString() == buttons[x + 1]!!.text.toString()) {
+                // Sprawdzamy wszystkie możliwości zawierające 2 środkowe znaki
+                return ((buttons[x - 3]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 2]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 1]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x + 1]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                        (buttons[x - 2]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x - 1]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 1]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 2]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                        (buttons[x - 1]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 1]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 2]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 3]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                        (buttons[x + 1]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 2]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 3]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 4]!!.text.toString() == buttons[x]!!.text.toString()))
+            }
+            // Jeśli lewy środek jest zaznaczony i jest różny od prawgo środka
+            if (buttons[x]!!.text.toString() != "") {
+                if (    buttons[x - 4]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 3]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 2]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 1]!!.text.toString() == buttons[x]!!.text.toString())
+                    return true
+
+            }
+            if (buttons[x + 1]!!.text.toString() != "") { // Jeśli prawy środek jest zaznaczony i jest różny od lewego środka
+                return (
+                        buttons[x + 5]!!.text.toString() == buttons[x + 1]!!.text.toString() &&
+                                buttons[x + 4]!!.text.toString() == buttons[x + 1]!!.text.toString() &&
+                                buttons[x + 3]!!.text.toString() == buttons[x + 1]!!.text.toString() &&
+                                buttons[x + 2]!!.text.toString() == buttons[x + 1]!!.text.toString())
+            }
+
+
+        }
+        return false
+    }
+
+    private fun chceckVertical(): Boolean {
+        for (x in 40..49) {
+            // Czy dwa środkowe mają takie same niepuste znaki
+            if (buttons[x]!!.text.toString() != "" && buttons[x + 10]!!.text.toString() != "" && buttons[x]!!.text.toString() == buttons[x + 10]!!.text.toString()) {
+                // Sprawdzamy wszystkie możliwości zawierające 2 środkowe znaki
+                return ((buttons[x - 30]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                        (buttons[x - 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                        (buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 30]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                        (buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 30]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                buttons[x + 40]!!.text.toString() == buttons[x]!!.text.toString()))
+            }
+            // Jeśli górny środek jest zaznaczony i jest różny od dolnego środka
+            if (buttons[x]!!.text.toString() != "") {
+                if (    buttons[x - 40]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 30]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                        buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString())
+                    return true
+
+            }
+            if (buttons[x + 10]!!.text.toString() != "") { // Jeśli dolny środek jest zaznaczony i jest różny od górnego środka
+                return (
+                        buttons[x + 50]!!.text.toString() == buttons[x + 10]!!.text.toString() &&
+                                buttons[x + 40]!!.text.toString() == buttons[x + 10]!!.text.toString() &&
+                                buttons[x + 30]!!.text.toString() == buttons[x + 10]!!.text.toString() &&
+                                buttons[x + 20]!!.text.toString() == buttons[x + 10]!!.text.toString())
+            }
+
+
+        }
+        return false
+    }
+
 
     @SuppressLint("SetTextI18n")
     private fun updatePointsText() {
