@@ -65,7 +65,7 @@ class NewActivity : AppCompatActivity() {
                 } else if (roundCount == 99) {
                     draw()
                 } else {
-                   switchTurn()
+                    switchTurn()
                     // if (computer && !turn) cpu()
                 }
             }
@@ -79,7 +79,7 @@ class NewActivity : AppCompatActivity() {
 
     private fun checkForWin(): Boolean {
         // Log.i("win ? ", (checkHorizontal() || checkVertical()).toString())
-        return (checkHorizontal() || checkVertical())
+        return (checkHorizontal() || checkVertical() || checkLeftDiagonally() || checkRightDiagonally())
     }
 
     private fun checkVertical(): Boolean {
@@ -131,19 +131,19 @@ class NewActivity : AppCompatActivity() {
                                 buttons[x - 20]!!.text.toString() == buttons[x]!!.text.toString() &&
                                 buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
                                 buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString()) ||
-                        (buttons[x - 20]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString()) ||
-                        (buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 30]!!.text.toString() == buttons[x]!!.text.toString()) ||
-                        (buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 30]!!.text.toString() == buttons[x]!!.text.toString() &&
-                                buttons[x + 40]!!.text.toString() == buttons[x]!!.text.toString())
-                 )
+                                (buttons[x - 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                                (buttons[x - 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 30]!!.text.toString() == buttons[x]!!.text.toString()) ||
+                                (buttons[x + 10]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 20]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 30]!!.text.toString() == buttons[x]!!.text.toString() &&
+                                        buttons[x + 40]!!.text.toString() == buttons[x]!!.text.toString())
+                        )
             ) return true
 
             // Jeśli górny środek jest zaznaczony i jest różny od dolnego środka
@@ -162,6 +162,28 @@ class NewActivity : AppCompatActivity() {
                 buttons[x + 20]!!.text.toString() == buttons[x + 10]!!.text.toString()
             ) return true
         }
+        return false
+    }
+
+    private fun checkLeftDiagonally(): Boolean {
+        for (x in 4..9) for (y in 0..50 step 10) if (buttons[y + x]!!.text.toString() != "" &&
+            buttons[y + x + 9]!!.text.toString() == buttons[x + y]!!.text.toString() &&
+            buttons[y + x + 18]!!.text.toString() == buttons[x + y]!!.text.toString() &&
+            buttons[y + x + 27]!!.text.toString() == buttons[x + y]!!.text.toString() &&
+            buttons[y + x + 36]!!.text.toString() == buttons[x + y]!!.text.toString()
+        )
+            return true
+        return false
+    }
+
+    private fun checkRightDiagonally(): Boolean {
+        for (x in 0..5) for (y in 0..50 step 10) if (buttons[y + x]!!.text.toString() != "" &&
+            buttons[y + x + 11]!!.text.toString() == buttons[x + y]!!.text.toString() &&
+            buttons[y + x + 22]!!.text.toString() == buttons[x + y]!!.text.toString() &&
+            buttons[y + x + 33]!!.text.toString() == buttons[x + y]!!.text.toString() &&
+            buttons[y + x + 44]!!.text.toString() == buttons[x + y]!!.text.toString()
+        )
+            return true
         return false
     }
 
@@ -186,17 +208,17 @@ class NewActivity : AppCompatActivity() {
             buttons[i]!!.isEnabled = true
         }
         roundCount = 0
-       switchTurn()
+        switchTurn()
     }
+
     private fun switchTurn() {
         turn = !turn
-        if(turn){
-            tvp1.isEnabled=true
-            tvp2.isEnabled=false
-        }
-        else{
-            tvp1.isEnabled=false
-            tvp2.isEnabled=true
+        if (turn) {
+            tvp1.isEnabled = true
+            tvp2.isEnabled = false
+        } else {
+            tvp1.isEnabled = false
+            tvp2.isEnabled = true
         }
 
     }
